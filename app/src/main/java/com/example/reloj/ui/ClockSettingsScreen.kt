@@ -9,14 +9,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,6 +24,18 @@ fun ClockSettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val settings = uiState.styleSettings
+
+    val timeZones = listOf(
+        "America/Mexico_City",
+        "America/New_York",
+        "America/Los_Angeles",
+        "America/Bogota",
+        "America/Argentina/Buenos_Aires",
+        "Europe/Madrid",
+        "Europe/London",
+        "Asia/Tokyo",
+        "Asia/Seoul"
+    )
 
     Scaffold(
         topBar = {
@@ -70,6 +79,44 @@ fun ClockSettingsScreen(
 
             Divider()
 
+            Text("Zona Horaria", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+
+            SettingSwitch(
+                label = "Usar zona horaria del dispositivo",
+                checked = settings.useDeviceTimeZone,
+                onCheckedChange = { viewModel.setUseDeviceTimeZone(it) }
+            )
+
+            if (!settings.useDeviceTimeZone) {
+                var expanded by remember { mutableStateOf(false) }
+
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(
+                        onClick = { expanded = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Zona: ${settings.selectedZoneId}")
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        timeZones.forEach { zone ->
+                            DropdownMenuItem(
+                                text = { Text(zone) },
+                                onClick = {
+                                    viewModel.setSelectedZoneId(zone)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
             Text("Configuración Analógica", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
 
             SettingSwitch(
@@ -107,7 +154,7 @@ fun ClockSettingsScreen(
                 onClick = onBack,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Guardar y Volver")
+                Text("Cerrar")
             }
         }
     }
@@ -124,7 +171,7 @@ fun SettingSwitch(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

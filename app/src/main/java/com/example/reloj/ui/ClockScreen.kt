@@ -1,6 +1,7 @@
 package com.example.reloj.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +11,9 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,7 +54,7 @@ fun ClockScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "Personalizar"
+                        contentDescription = "Ajustes"
                     )
                 }
             }
@@ -61,37 +64,58 @@ fun ClockScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(settings.colorPreset.backgroundColor)
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
+                .padding(innerPadding)
         ) {
-            when (uiState.selectedClockFace) {
-                ClockFaceType.DIGITAL_MINIMAL -> {
-                    DigitalMinimalClockFace(
-                        time = uiState.currentTime,
-                        settings = settings
-                    )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (uiState.selectedClockFace) {
+                        ClockFaceType.DIGITAL_MINIMAL -> {
+                            DigitalMinimalClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
+                        ClockFaceType.DIGITAL_NEON -> {
+                            DigitalNeonClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
+                        ClockFaceType.ANALOG_CLASSIC -> {
+                            AnalogClassicClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
+                        else -> {
+                            DigitalMinimalClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+                    }
                 }
 
-                ClockFaceType.DIGITAL_NEON -> {
-                    DigitalNeonClockFace(
-                        time = uiState.currentTime,
-                        settings = settings
-                    )
-                }
-
-                ClockFaceType.ANALOG_CLASSIC -> {
-                    AnalogClassicClockFace(
-                        time = uiState.currentTime,
-                        settings = settings
-                    )
-                }
-
-                else -> {
-                    DigitalMinimalClockFace(
-                        time = uiState.currentTime,
-                        settings = settings
-                    )
-                }
+                Text(
+                    text = if (settings.useDeviceTimeZone) {
+                        "Zona del dispositivo"
+                    } else {
+                        uiState.zoneId.id
+                    },
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
             }
         }
     }

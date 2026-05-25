@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import java.time.ZoneId
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "clock_settings")
 
@@ -24,6 +25,8 @@ class ClockSettingsRepository(private val context: Context) {
         val COLOR_PRESET = stringPreferencesKey("color_preset")
         val SHOW_ANALOG_NUMBERS = booleanPreferencesKey("show_analog_numbers")
         val SHOW_ANALOG_MARKS = booleanPreferencesKey("show_analog_marks")
+        val USE_DEVICE_TIME_ZONE = booleanPreferencesKey("use_device_time_zone")
+        val SELECTED_ZONE_ID = stringPreferencesKey("selected_zone_id")
     }
 
     data class UserPreferences(
@@ -62,7 +65,9 @@ class ClockSettingsRepository(private val context: Context) {
                     is24HourFormat = prefs[Keys.IS_24H] ?: true,
                     colorPreset = preset,
                     showAnalogNumbers = prefs[Keys.SHOW_ANALOG_NUMBERS] ?: true,
-                    showAnalogMinuteMarks = prefs[Keys.SHOW_ANALOG_MARKS] ?: true
+                    showAnalogMinuteMarks = prefs[Keys.SHOW_ANALOG_MARKS] ?: true,
+                    useDeviceTimeZone = prefs[Keys.USE_DEVICE_TIME_ZONE] ?: true,
+                    selectedZoneId = prefs[Keys.SELECTED_ZONE_ID] ?: ZoneId.systemDefault().id
                 )
             )
         }
@@ -93,5 +98,13 @@ class ClockSettingsRepository(private val context: Context) {
 
     suspend fun updateShowAnalogMarks(v: Boolean) {
         context.dataStore.edit { it[Keys.SHOW_ANALOG_MARKS] = v }
+    }
+
+    suspend fun updateUseDeviceTimeZone(v: Boolean) {
+        context.dataStore.edit { it[Keys.USE_DEVICE_TIME_ZONE] = v }
+    }
+
+    suspend fun updateSelectedZoneId(v: String) {
+        context.dataStore.edit { it[Keys.SELECTED_ZONE_ID] = v }
     }
 }

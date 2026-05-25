@@ -33,7 +33,9 @@ data class ClockStyleSettings(
     val is24HourFormat: Boolean = true,
     val colorPreset: ClockColorPreset = ClockColorPreset.DEFAULT,
     val showAnalogNumbers: Boolean = true,
-    val showAnalogMinuteMarks: Boolean = true
+    val showAnalogMinuteMarks: Boolean = true,
+    val useDeviceTimeZone: Boolean = true,
+    val selectedZoneId: String = ZoneId.systemDefault().id
 )
 
 sealed class Screen {
@@ -66,9 +68,23 @@ class ClockViewModel(
     private fun startClock() {
         viewModelScope.launch {
             timeProvider.getTimeTicks().collect { instant ->
+                val currentZone = calculateCurrentZoneId(_uiState.value.styleSettings)
                 _uiState.value = _uiState.value.copy(
-                    currentTime = instant.atZone(_uiState.value.zoneId)
+                    currentTime = instant.atZone(currentZone),
+                    zoneId = currentZone
                 )
+            }
+        }
+    }
+
+    private fun calculateCurrentZoneId(settings: ClockStyleSettings): ZoneId {
+        return if (settings.useDeviceTimeZone) {
+            ZoneId.systemDefault()
+        } else {
+            try {
+                ZoneId.of(settings.selectedZoneId)
+            } catch (e: Exception) {
+                ZoneId.systemDefault()
             }
         }
     }
@@ -76,9 +92,12 @@ class ClockViewModel(
     private fun observePreferences() {
         viewModelScope.launch {
             repository.userPreferencesFlow.collect { prefs ->
+                val currentZone = calculateCurrentZoneId(prefs.styleSettings)
                 _uiState.value = _uiState.value.copy(
                     selectedClockFace = prefs.selectedClockFace,
-                    styleSettings = prefs.styleSettings
+                    styleSettings = prefs.styleSettings,
+                    zoneId = currentZone,
+                    currentTime = Instant.now().atZone(currentZone)
                 )
             }
         }
@@ -97,34 +116,20 @@ class ClockViewModel(
         _uiState.value = _uiState.value.copy(currentScreen = screen)
     }
 
-    fun setShowSeconds(show: Boolean) {
-        viewModelScope.launch { repository.updateShowSeconds(show) }
-    }
-
-    fun setShowDate(show: Boolean) {
-        viewModelScope.launch { repository.updateShowDate(show) }
-    }
-
-    fun set24HourFormat(is24Hour: Boolean) {
-        viewModelScope.launch { repository.updateIs24H(is24Hour) }
-    }
-
-    fun setColorPreset(preset: ClockColorPreset) {
-        viewModelScope.launch { repository.updateColorPreset(preset) }
-    }
-
-    fun setShowAnalogNumbers(show: Boolean) {
-        viewModelScope.launch { repository.updateShowAnalogNumbers(show) }
-    }
-
-    fun setShowAnalogMinuteMarks(show: Boolean) {
-        viewModelScope.launch { repository.updateShowAnalogMarks(show) }
-    }
+    fun setShowSeconds(show: Boolean) = viewModelScope.launch { repository.updateShowSeconds(show) }
+    fun setShowDate(show: Boolean) = viewModelScope.launch { repository.updateShowDate(show) }
+    fun set24HourFormat(is24Hour: Boolean) = viewModelScope.launch { repository.updateIs24H(is24Hour) }
+    fun setColorPreset(preset: ClockColorPreset) = viewModelScope.launch { repository.updateColorPreset(preset) }
+    fun setShowAnalogNumbers(show: Boolean) = viewModelScope.launch { repository.updateShowAnalogNumbers(show) }
+    fun setShowAnalogMinuteMarks(show: Boolean) = viewModelScope.launch { repository.updateShowAnalogMarks(show) }
+    
+    fun setUseDeviceTimeZone(useDevice: Boolean) = viewModelScope.launch { repository.updateUseDeviceTimeZone(useDevice) }
+    fun setSelectedZoneId(zoneId: String) = viewModelScope.launch { repository.updateSelectedZoneId(zoneId) }
 
     fun changeTimeZone(zoneId: ZoneId) {
-        _uiState.value = _uiState.value.copy(
-            zoneId = zoneId,
-            currentTime = Instant.now().atZone(zoneId)
-        )
+        // This function was likely for manual override in UI before settings
+        // Keeping it compatible but it should probably update settings now
+        setSelectedZoneId(zoneId.id)
+        setUseDeviceTimeZone(false)
     }
 }
