@@ -3,6 +3,7 @@ package com.example.reloj.ui
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.reloj.data.ClockSettingsRepository
 import com.example.reloj.domain.SystemTimeProvider
 import com.example.reloj.domain.TimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +51,7 @@ data class ClockUiState(
 )
 
 class ClockViewModel(
+    private val repository: ClockSettingsRepository,
     private val timeProvider: TimeProvider = SystemTimeProvider()
 ) : ViewModel() {
 
@@ -58,28 +60,36 @@ class ClockViewModel(
 
     init {
         startClock()
+        observePreferences()
     }
 
     private fun startClock() {
         viewModelScope.launch {
             timeProvider.getTimeTicks().collect { instant ->
-                updateTime(instant)
+                _uiState.value = _uiState.value.copy(
+                    currentTime = instant.atZone(_uiState.value.zoneId)
+                )
             }
         }
     }
 
-    private fun updateTime(instant: Instant) {
-        _uiState.value = _uiState.value.copy(
-            currentTime = instant.atZone(_uiState.value.zoneId)
-        )
+    private fun observePreferences() {
+        viewModelScope.launch {
+            repository.userPreferencesFlow.collect { prefs ->
+                _uiState.value = _uiState.value.copy(
+                    selectedClockFace = prefs.selectedClockFace,
+                    styleSettings = prefs.styleSettings
+                )
+            }
+        }
     }
 
     fun selectClockFace(clockFaceType: ClockFaceType) {
         if (clockFaceType.isAvailable) {
-            _uiState.value = _uiState.value.copy(
-                selectedClockFace = clockFaceType,
-                currentScreen = Screen.Clock
-            )
+            viewModelScope.launch {
+                repository.updateSelectedFace(clockFaceType)
+                _uiState.value = _uiState.value.copy(currentScreen = Screen.Clock)
+            }
         }
     }
 
@@ -87,19 +97,29 @@ class ClockViewModel(
         _uiState.value = _uiState.value.copy(currentScreen = screen)
     }
 
-    fun updateStyleSettings(update: (ClockStyleSettings) -> ClockStyleSettings) {
-        _uiState.value = _uiState.value.copy(
-            styleSettings = update(_uiState.value.styleSettings)
-        )
+    fun setShowSeconds(show: Boolean) {
+        viewModelScope.launch { repository.updateShowSeconds(show) }
     }
 
-    // Individual update functions for convenience
-    fun setShowSeconds(show: Boolean) = updateStyleSettings { it.copy(showSeconds = show) }
-    fun setShowDate(show: Boolean) = updateStyleSettings { it.copy(showDate = show) }
-    fun set24HourFormat(is24Hour: Boolean) = updateStyleSettings { it.copy(is24HourFormat = is24Hour) }
-    fun setColorPreset(preset: ClockColorPreset) = updateStyleSettings { it.copy(colorPreset = preset) }
-    fun setShowAnalogNumbers(show: Boolean) = updateStyleSettings { it.copy(showAnalogNumbers = show) }
-    fun setShowAnalogMinuteMarks(show: Boolean) = updateStyleSettings { it.copy(showAnalogMinuteMarks = show) }
+    fun setShowDate(show: Boolean) {
+        viewModelScope.launch { repository.updateShowDate(show) }
+    }
+
+    fun set24HourFormat(is24Hour: Boolean) {
+        viewModelScope.launch { repository.updateIs24H(is24Hour) }
+    }
+
+    fun setColorPreset(preset: ClockColorPreset) {
+        viewModelScope.launch { repository.updateColorPreset(preset) }
+    }
+
+    fun setShowAnalogNumbers(show: Boolean) {
+        viewModelScope.launch { repository.updateShowAnalogNumbers(show) }
+    }
+
+    fun setShowAnalogMinuteMarks(show: Boolean) {
+        viewModelScope.launch { repository.updateShowAnalogMarks(show) }
+    }
 
     fun changeTimeZone(zoneId: ZoneId) {
         _uiState.value = _uiState.value.copy(
