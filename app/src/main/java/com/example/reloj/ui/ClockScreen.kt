@@ -34,6 +34,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.reloj.ui.components.AnalogClassicClockFace
+import com.example.reloj.ui.components.AnalogRomanClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
 import com.example.reloj.ui.components.FlipClockFace
@@ -146,6 +147,13 @@ fun ClockScreen(
 
                         ClockFaceType.ANALOG_CLASSIC -> {
                             AnalogClassicClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
+                        ClockFaceType.ANALOG_ROMAN -> {
+                            AnalogRomanClockFace(
                                 time = uiState.currentTime,
                                 settings = settings
                             )
