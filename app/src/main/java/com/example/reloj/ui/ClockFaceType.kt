@@ -7,7 +7,7 @@ enum class ClockFaceType(
 ) {
     DIGITAL_MINIMAL("Digital Minimal", "Un diseño limpio y moderno.", true),
     DIGITAL_NEON("Digital Neón", "Estilo vibrante con efecto neón.", true),
-    ANALOG_CLASSIC("Analógico Clásico", "Reloj de agujas tradicional.", false),
+    ANALOG_CLASSIC("Analógico Clásico", "Reloj de agujas tradicional.", true),
     ANALOG_ROMAN("Analógico Romano", "Elegancia clásica con números romanos.", false),
     FLIP_CLOCK("Flip Clock", "Estilo retro de paneles mecánicos.", false),
     SMART_WATCH("Smart Watch", "Interfaz moderna tipo reloj inteligente.", false),

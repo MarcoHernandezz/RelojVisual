@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.reloj.ui.components.AnalogClassicClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
 
@@ -44,6 +45,9 @@ fun ClockScreen(
                 }
                 ClockFaceType.DIGITAL_NEON -> {
                     DigitalNeonClockFace(time = uiState.currentTime)
+                }
+                ClockFaceType.ANALOG_CLASSIC -> {
+                    AnalogClassicClockFace(time = uiState.currentTime)
                 }
                 else -> {
                     // Fallback para tipos no implementados
