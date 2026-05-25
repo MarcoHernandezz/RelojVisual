@@ -1,9 +1,12 @@
 package com.example.reloj.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -13,7 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.dp
 import com.example.reloj.ui.components.AnalogClassicClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
@@ -21,37 +24,73 @@ import com.example.reloj.ui.components.DigitalNeonClockFace
 @Composable
 fun ClockScreen(
     viewModel: ClockViewModel,
-    onOpenGallery: () -> Unit
+    onOpenGallery: () -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val settings = uiState.styleSettings
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = onOpenGallery) {
-                Icon(Icons.Default.Settings, contentDescription = "Cambiar Reloj")
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                FloatingActionButton(
+                    onClick = onOpenGallery,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = "Galería"
+                    )
+                }
+
+                FloatingActionButton(
+                    onClick = onOpenSettings
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Personalizar"
+                    )
+                }
             }
         }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(settings.colorPreset.backgroundColor)
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
             when (uiState.selectedClockFace) {
                 ClockFaceType.DIGITAL_MINIMAL -> {
-                    DigitalMinimalClockFace(time = uiState.currentTime)
+                    DigitalMinimalClockFace(
+                        time = uiState.currentTime,
+                        settings = settings
+                    )
                 }
+
                 ClockFaceType.DIGITAL_NEON -> {
-                    DigitalNeonClockFace(time = uiState.currentTime)
+                    DigitalNeonClockFace(
+                        time = uiState.currentTime,
+                        settings = settings
+                    )
                 }
+
                 ClockFaceType.ANALOG_CLASSIC -> {
-                    AnalogClassicClockFace(time = uiState.currentTime)
+                    AnalogClassicClockFace(
+                        time = uiState.currentTime,
+                        settings = settings
+                    )
                 }
+
                 else -> {
-                    // Fallback para tipos no implementados
-                    DigitalMinimalClockFace(time = uiState.currentTime)
+                    DigitalMinimalClockFace(
+                        time = uiState.currentTime,
+                        settings = settings
+                    )
                 }
             }
         }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.reloj.ui.ClockGalleryScreen
 import com.example.reloj.ui.ClockScreen
+import com.example.reloj.ui.ClockSettingsScreen
 import com.example.reloj.ui.ClockViewModel
 import com.example.reloj.ui.Screen
 import com.example.reloj.ui.theme.RELOJTheme
@@ -29,6 +30,9 @@ class MainActivity : ComponentActivity() {
                             viewModel = clockViewModel,
                             onOpenGallery = {
                                 clockViewModel.navigateTo(Screen.Gallery)
+                            },
+                            onOpenSettings = {
+                                clockViewModel.navigateTo(Screen.Settings)
                             }
                         )
                     }
@@ -38,6 +42,15 @@ class MainActivity : ComponentActivity() {
                             onClockSelected = { clockFaceType ->
                                 clockViewModel.selectClockFace(clockFaceType)
                             },
+                            onBack = {
+                                clockViewModel.navigateTo(Screen.Clock)
+                            }
+                        )
+                    }
+
+                    Screen.Settings -> {
+                        ClockSettingsScreen(
+                            viewModel = clockViewModel,
                             onBack = {
                                 clockViewModel.navigateTo(Screen.Clock)
                             }

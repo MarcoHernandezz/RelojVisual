@@ -7,18 +7,45 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.reloj.ui.ClockStyleSettings
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun DigitalMinimalClockFace(
     time: ZonedDateTime,
+    settings: ClockStyleSettings,
     modifier: Modifier = Modifier
 ) {
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy")
+    val timePattern = when {
+        settings.is24HourFormat && settings.showSeconds -> "HH:mm:ss"
+        settings.is24HourFormat && !settings.showSeconds -> "HH:mm"
+        !settings.is24HourFormat && settings.showSeconds -> "hh:mm:ss a"
+        else -> "hh:mm a"
+    }
+
+    val timeFormatter = DateTimeFormatter.ofPattern(timePattern, Locale("es", "MX"))
+    val dateFormatter = DateTimeFormatter.ofPattern(
+        "EEEE, d 'de' MMMM 'de' yyyy",
+        Locale("es", "MX")
+    )
+
+    val preset = settings.colorPreset
+    val primaryColor = if (preset.primaryColor == Color.Transparent) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        preset.primaryColor
+    }
+
+    val secondaryColor = if (preset.secondaryColor == Color.Transparent) {
+        MaterialTheme.colorScheme.secondary
+    } else {
+        preset.secondaryColor
+    }
 
     Column(
         modifier = modifier,
@@ -31,12 +58,15 @@ fun DigitalMinimalClockFace(
                 fontSize = 80.sp,
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.primary
+            color = primaryColor
         )
-        Text(
-            text = time.format(dateFormatter),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary
-        )
+
+        if (settings.showDate) {
+            Text(
+                text = time.format(dateFormatter).replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.bodyLarge,
+                color = secondaryColor
+            )
+        }
     }
 }
