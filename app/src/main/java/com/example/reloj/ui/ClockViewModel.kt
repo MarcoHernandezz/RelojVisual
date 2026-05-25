@@ -12,9 +12,16 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+sealed class Screen {
+    object Clock : Screen()
+    object Gallery : Screen()
+}
+
 data class ClockUiState(
     val currentTime: ZonedDateTime = ZonedDateTime.now(ZoneId.systemDefault()),
-    val zoneId: ZoneId = ZoneId.systemDefault()
+    val zoneId: ZoneId = ZoneId.systemDefault(),
+    val selectedClockFace: ClockFaceType = ClockFaceType.DIGITAL_MINIMAL,
+    val currentScreen: Screen = Screen.Clock
 )
 
 class ClockViewModel(
@@ -42,7 +49,19 @@ class ClockViewModel(
         )
     }
 
-    // Preparado para cambiar la zona horaria en el futuro
+    fun selectClockFace(clockFaceType: ClockFaceType) {
+        if (clockFaceType.isAvailable) {
+            _uiState.value = _uiState.value.copy(
+                selectedClockFace = clockFaceType,
+                currentScreen = Screen.Clock
+            )
+        }
+    }
+
+    fun navigateTo(screen: Screen) {
+        _uiState.value = _uiState.value.copy(currentScreen = screen)
+    }
+
     fun changeTimeZone(zoneId: ZoneId) {
         _uiState.value = _uiState.value.copy(
             zoneId = zoneId,
