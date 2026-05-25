@@ -37,6 +37,7 @@ import com.example.reloj.ui.components.AnalogClassicClockFace
 import com.example.reloj.ui.components.AnalogRomanClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
+import com.example.reloj.ui.components.DiveWatchClockFace
 import com.example.reloj.ui.components.FlipClockFace
 import com.example.reloj.ui.components.SmartWatchClockFace
 
@@ -80,15 +81,14 @@ fun ClockScreen(
     }
 
     val zoneLabel = if (settings.useDeviceTimeZone) {
-        "Zona del dispositivo"
+        "Dispositivo"
     } else {
-        uiState.zoneId.id
+        uiState.zoneId.id.split("/").last().replace("_", " ")
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            // Requisito 7: Ocultar botones flotantes si showControls es false
             if (settings.showControls) {
                 Column(
                     horizontalAlignment = Alignment.End
@@ -119,7 +119,6 @@ fun ClockScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(settings.colorPreset.backgroundColor)
-                // Requisito 7 y 8: Tocar el fondo para alternar controles
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
@@ -178,6 +177,13 @@ fun ClockScreen(
                                 time = uiState.currentTime,
                                 settings = settings,
                                 zoneLabel = zoneLabel
+                            )
+                        }
+
+                        ClockFaceType.DIVE_WATCH -> {
+                            DiveWatchClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
                             )
                         }
 
