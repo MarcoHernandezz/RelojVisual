@@ -38,6 +38,7 @@ import com.example.reloj.ui.components.AnalogRomanClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
 import com.example.reloj.ui.components.FlipClockFace
+import com.example.reloj.ui.components.SmartWatchClockFace
 
 @Composable
 fun ClockScreen(
@@ -76,6 +77,12 @@ fun ClockScreen(
                 controller.show(WindowInsetsCompat.Type.systemBars())
             }
         }
+    }
+
+    val zoneLabel = if (settings.useDeviceTimeZone) {
+        "Zona del dispositivo"
+    } else {
+        uiState.zoneId.id
     }
 
     Scaffold(
@@ -166,6 +173,14 @@ fun ClockScreen(
                             )
                         }
 
+                        ClockFaceType.SMART_WATCH -> {
+                            SmartWatchClockFace(
+                                time = uiState.currentTime,
+                                settings = settings,
+                                zoneLabel = zoneLabel
+                            )
+                        }
+
                         else -> {
                             DigitalMinimalClockFace(
                                 time = uiState.currentTime,
@@ -178,7 +193,7 @@ fun ClockScreen(
                 if (settings.showControls) {
                     Text(
                         text = if (settings.useDeviceTimeZone) {
-                            "Zona del dispositivo"
+                            "Zona del dispositivo (${uiState.zoneId.id})"
                         } else {
                             uiState.zoneId.id
                         },
