@@ -9,7 +9,7 @@ enum class ClockFaceType(
     DIGITAL_NEON("Digital Neón", "Estilo vibrante con efecto neón.", true),
     ANALOG_CLASSIC("Analógico Clásico", "Reloj de agujas tradicional.", true),
     ANALOG_ROMAN("Analógico Romano", "Elegancia clásica con números romanos.", false),
-    FLIP_CLOCK("Flip Clock", "Estilo retro de paneles mecánicos.", false),
+    FLIP_CLOCK("Flip Clock", "Estilo retro de paneles mecánicos.", true),
     SMART_WATCH("Smart Watch", "Interfaz moderna tipo reloj inteligente.", false),
     DIVE_WATCH("Dive Watch", "Inspirado en relojes de buceo.", false),
     MECHANICAL("Mecánico", "Vista detallada del mecanismo interno.", false)

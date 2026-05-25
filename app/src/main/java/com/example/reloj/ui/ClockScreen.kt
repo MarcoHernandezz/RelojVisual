@@ -36,6 +36,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.example.reloj.ui.components.AnalogClassicClockFace
 import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
+import com.example.reloj.ui.components.FlipClockFace
 
 @Composable
 fun ClockScreen(
@@ -150,6 +151,13 @@ fun ClockScreen(
                             )
                         }
 
+                        ClockFaceType.FLIP_CLOCK -> {
+                            FlipClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
                         else -> {
                             DigitalMinimalClockFace(
                                 time = uiState.currentTime,
@@ -159,19 +167,21 @@ fun ClockScreen(
                     }
                 }
 
-                Text(
-                    text = if (settings.useDeviceTimeZone) {
-                        "Zona del dispositivo"
-                    } else {
-                        uiState.zoneId.id
-                    },
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (uiState.selectedClockFace == ClockFaceType.DIGITAL_NEON) 
-                        Color(0xFF00FFD1).copy(alpha = 0.6f)
-                    else 
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+                if (settings.showControls) {
+                    Text(
+                        text = if (settings.useDeviceTimeZone) {
+                            "Zona del dispositivo"
+                        } else {
+                            uiState.zoneId.id
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (uiState.selectedClockFace == ClockFaceType.DIGITAL_NEON) 
+                            Color(0xFF00FFD1).copy(alpha = 0.6f)
+                        else 
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
             }
         }
     }
