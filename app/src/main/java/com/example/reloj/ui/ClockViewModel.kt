@@ -35,7 +35,10 @@ data class ClockStyleSettings(
     val showAnalogNumbers: Boolean = true,
     val showAnalogMinuteMarks: Boolean = true,
     val useDeviceTimeZone: Boolean = true,
-    val selectedZoneId: String = ZoneId.systemDefault().id
+    val selectedZoneId: String = ZoneId.systemDefault().id,
+    val keepScreenOn: Boolean = true,
+    val fullScreenMode: Boolean = false,
+    val showControls: Boolean = true
 )
 
 sealed class Screen {
@@ -126,9 +129,15 @@ class ClockViewModel(
     fun setUseDeviceTimeZone(useDevice: Boolean) = viewModelScope.launch { repository.updateUseDeviceTimeZone(useDevice) }
     fun setSelectedZoneId(zoneId: String) = viewModelScope.launch { repository.updateSelectedZoneId(zoneId) }
 
+    fun setKeepScreenOn(value: Boolean) = viewModelScope.launch { repository.updateKeepScreenOn(value) }
+    fun setFullScreenMode(value: Boolean) = viewModelScope.launch { repository.updateFullScreenMode(value) }
+    fun setShowControls(value: Boolean) = viewModelScope.launch { repository.updateShowControls(value) }
+    fun toggleControls() {
+        val currentValue = _uiState.value.styleSettings.showControls
+        setShowControls(!currentValue)
+    }
+
     fun changeTimeZone(zoneId: ZoneId) {
-        // This function was likely for manual override in UI before settings
-        // Keeping it compatible but it should probably update settings now
         setSelectedZoneId(zoneId.id)
         setUseDeviceTimeZone(false)
     }

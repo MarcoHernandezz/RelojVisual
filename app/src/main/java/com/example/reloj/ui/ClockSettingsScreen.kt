@@ -117,6 +117,28 @@ fun ClockSettingsScreen(
 
             Divider()
 
+            Text("Modo escritorio", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+
+            SettingSwitch(
+                label = "Mantener pantalla encendida",
+                checked = settings.keepScreenOn,
+                onCheckedChange = { viewModel.setKeepScreenOn(it) }
+            )
+
+            SettingSwitch(
+                label = "Modo pantalla completa",
+                checked = settings.fullScreenMode,
+                onCheckedChange = { viewModel.setFullScreenMode(it) }
+            )
+
+            SettingSwitch(
+                label = "Mostrar controles",
+                checked = settings.showControls,
+                onCheckedChange = { viewModel.setShowControls(it) }
+            )
+
+            Divider()
+
             Text("Configuración Analógica", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
 
             SettingSwitch(

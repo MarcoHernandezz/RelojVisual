@@ -27,6 +27,9 @@ class ClockSettingsRepository(private val context: Context) {
         val SHOW_ANALOG_MARKS = booleanPreferencesKey("show_analog_marks")
         val USE_DEVICE_TIME_ZONE = booleanPreferencesKey("use_device_time_zone")
         val SELECTED_ZONE_ID = stringPreferencesKey("selected_zone_id")
+        val KEEP_SCREEN_ON = booleanPreferencesKey("keep_screen_on")
+        val FULL_SCREEN_MODE = booleanPreferencesKey("full_screen_mode")
+        val SHOW_CONTROLS = booleanPreferencesKey("show_controls")
     }
 
     data class UserPreferences(
@@ -67,7 +70,10 @@ class ClockSettingsRepository(private val context: Context) {
                     showAnalogNumbers = prefs[Keys.SHOW_ANALOG_NUMBERS] ?: true,
                     showAnalogMinuteMarks = prefs[Keys.SHOW_ANALOG_MARKS] ?: true,
                     useDeviceTimeZone = prefs[Keys.USE_DEVICE_TIME_ZONE] ?: true,
-                    selectedZoneId = prefs[Keys.SELECTED_ZONE_ID] ?: ZoneId.systemDefault().id
+                    selectedZoneId = prefs[Keys.SELECTED_ZONE_ID] ?: ZoneId.systemDefault().id,
+                    keepScreenOn = prefs[Keys.KEEP_SCREEN_ON] ?: true,
+                    fullScreenMode = prefs[Keys.FULL_SCREEN_MODE] ?: false,
+                    showControls = prefs[Keys.SHOW_CONTROLS] ?: true
                 )
             )
         }
@@ -106,5 +112,17 @@ class ClockSettingsRepository(private val context: Context) {
 
     suspend fun updateSelectedZoneId(v: String) {
         context.dataStore.edit { it[Keys.SELECTED_ZONE_ID] = v }
+    }
+
+    suspend fun updateKeepScreenOn(v: Boolean) {
+        context.dataStore.edit { it[Keys.KEEP_SCREEN_ON] = v }
+    }
+
+    suspend fun updateFullScreenMode(v: Boolean) {
+        context.dataStore.edit { it[Keys.FULL_SCREEN_MODE] = v }
+    }
+
+    suspend fun updateShowControls(v: Boolean) {
+        context.dataStore.edit { it[Keys.SHOW_CONTROLS] = v }
     }
 }
