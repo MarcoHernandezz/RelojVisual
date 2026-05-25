@@ -5,12 +5,12 @@ enum class ClockFaceType(
     val description: String,
     val isAvailable: Boolean
 ) {
-    DIGITAL_MINIMAL("Digital Minimal", "Un diseño limpio y moderno.", true),
-    DIGITAL_NEON("Digital Neón", "Estilo vibrante con efecto neón.", true),
-    ANALOG_CLASSIC("Analógico Clásico", "Reloj de agujas tradicional.", true),
-    ANALOG_ROMAN("Analógico Romano", "Elegancia clásica con números romanos.", true),
-    FLIP_CLOCK("Flip Clock", "Estilo retro de paneles mecánicos.", true),
-    SMART_WATCH("Smart Watch", "Interfaz moderna tipo reloj inteligente.", true),
-    DIVE_WATCH("Dive Watch", "Inspirado en relojes de buceo.", true),
-    MECHANICAL("Mecánico", "Vista detallada del mecanismo interno.", true)
+    DIGITAL_MINIMAL("Digital minimalista", "Diseño limpio y moderno enfocado en la simplicidad.", true),
+    DIGITAL_NEON("Digital neón", "Efecto vibrante con colores neón sobre fondo oscuro.", true),
+    ANALOG_CLASSIC("Analógico clásico", "Reloj de agujas tradicional con marcas legibles.", true),
+    ANALOG_ROMAN("Analógico romano", "Estilo elegante con números romanos y diseño refinado.", true),
+    FLIP_CLOCK("Flip clock retro", "Estilo clásico de paneles mecánicos que cambian.", true),
+    SMART_WATCH("Smart watch", "Interfaz moderna tipo tablero con información útil.", true),
+    DIVE_WATCH("Reloj de buceo", "Diseño deportivo robusto con bisel destacado.", true),
+    MECHANICAL("Mecánico decorativo", "Vista artística del mecanismo interno decorativo.", true)
 }
