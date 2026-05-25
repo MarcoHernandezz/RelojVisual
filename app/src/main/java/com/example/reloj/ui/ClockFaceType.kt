@@ -12,5 +12,5 @@ enum class ClockFaceType(
     FLIP_CLOCK("Flip Clock", "Estilo retro de paneles mecánicos.", true),
     SMART_WATCH("Smart Watch", "Interfaz moderna tipo reloj inteligente.", true),
     DIVE_WATCH("Dive Watch", "Inspirado en relojes de buceo.", true),
-    MECHANICAL("Mecánico", "Vista detallada del mecanismo interno.", false)
+    MECHANICAL("Mecánico", "Vista detallada del mecanismo interno.", true)
 }

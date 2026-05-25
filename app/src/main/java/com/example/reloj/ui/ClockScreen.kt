@@ -39,6 +39,7 @@ import com.example.reloj.ui.components.DigitalMinimalClockFace
 import com.example.reloj.ui.components.DigitalNeonClockFace
 import com.example.reloj.ui.components.DiveWatchClockFace
 import com.example.reloj.ui.components.FlipClockFace
+import com.example.reloj.ui.components.MechanicalClockFace
 import com.example.reloj.ui.components.SmartWatchClockFace
 
 @Composable
@@ -182,6 +183,13 @@ fun ClockScreen(
 
                         ClockFaceType.DIVE_WATCH -> {
                             DiveWatchClockFace(
+                                time = uiState.currentTime,
+                                settings = settings
+                            )
+                        }
+
+                        ClockFaceType.MECHANICAL -> {
+                            MechanicalClockFace(
                                 time = uiState.currentTime,
                                 settings = settings
                             )
